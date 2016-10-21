@@ -10,5 +10,13 @@
 	"repository":   "derhuerst/email-providers",
 	"bugs":         "https://github.com/derhuerst/email-providers/issues",
 	"license":      "ISC",
-	"engines":      {"node": ">=4"}
+	"engines":      {"node": ">=4"},
+	"devDependencies": {
+		"node-fetch": "^1.6.3",
+		"lodash.uniq": "^4.5"
+	},
+	"scripts": {
+		"build":      "node build.js",
+		"prepublish": "npm run build && npm test"
+	}
 }
