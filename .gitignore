@@ -5,4 +5,5 @@ Thumbs.db
 node_modules
 npm-debug.log
 
-email-providers.json
+all.json
+common.json

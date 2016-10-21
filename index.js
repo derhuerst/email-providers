@@ -1,3 +1,3 @@
 'use strict'
 
-module.exports = require('./email-providers.json')
+module.exports = require('./all.json')

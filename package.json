@@ -3,7 +3,7 @@
 	"description":  "A list of common eMail providers.",
 	"version":      "0.1.0",
 	"main":         "index.js",
-	"files":        ["index.js", "email-providers.json"],
+	"files":        ["index.js", "all.json", "common.json"],
 	"keywords":     ["email", "mail", "providers", "endings", "address"],
 	"authors":      ["Jannis R <mail@jannisr.de>"],
 	"homepage":     "https://github.com/derhuerst/email-providers",
@@ -14,6 +14,8 @@
 	"devDependencies": {
 		"node-fetch": "^1.6.3",
 		"lodash.uniq": "^4.5",
+		"queue": "^",
+		"alexarank": "derhuerst/alexarank",
 		"domain-regex": "^0.0.1",
 		"punycode": "^2"
 	},
