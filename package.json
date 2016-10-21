@@ -13,10 +13,13 @@
 	"engines":      {"node": ">=4"},
 	"devDependencies": {
 		"node-fetch": "^1.6.3",
-		"lodash.uniq": "^4.5"
+		"lodash.uniq": "^4.5",
+		"domain-regex": "^0.0.1",
+		"punycode": "^2"
 	},
 	"scripts": {
 		"build":      "node build.js",
+		"test":       "node test.js",
 		"prepublish": "npm run build && npm test"
 	}
 }
