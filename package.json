@@ -1,0 +1,14 @@
+{
+	"name":         "email-providers",
+	"description":  "A list of common eMail providers.",
+	"version":      "0.1.0",
+	"main":         "index.js",
+	"files":        ["index.js", "email-providers.json"],
+	"keywords":     ["email", "mail", "providers", "endings", "address"],
+	"authors":      ["Jannis R <mail@jannisr.de>"],
+	"homepage":     "https://github.com/derhuerst/email-providers",
+	"repository":   "derhuerst/email-providers",
+	"bugs":         "https://github.com/derhuerst/email-providers/issues",
+	"license":      "ISC",
+	"engines":      {"node": ">=4"}
+}
