@@ -15,7 +15,7 @@
 		"node-fetch": "^1.6.3",
 		"lodash.uniq": "^4.5",
 		"queue": "^4",
-		"alexarank": "derhuerst/alexarank",
+		"alexarank": "^0.2",
 		"domain-regex": "^0.0.1",
 		"punycode": "^2"
 	},
