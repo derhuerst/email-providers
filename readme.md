@@ -24,8 +24,10 @@ npm install email-providers
 const all = require('email-providers/all.json')
 const common = require('email-providers/common.json')
 
-console.log(all[0], all.length) // 1033edge.com 3939
-console.log(common[0], common.length) // yahoo.com 123
+all.length    // 4149
+common.length // 187
+all[0]        // 1033edge.com
+common[0]     // yahoo.com
 ```
 
 
