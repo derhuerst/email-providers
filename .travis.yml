@@ -7,3 +7,14 @@ node_js:
 script:
   - 'npm run build'
   - 'npm test'
+before_deploy:
+  - npm i semver
+  - npm version --no-git-tag-version --force $(./node_modules/.bin/semver -i minor $(npm info vbb-graph version))
+deploy:
+  provider: npm
+  on:
+    branch: master
+    node: stable
+  email: 'mail@jannisr.de'
+  api_key: ${NPM_KEY}
+  skip_cleanup: true
