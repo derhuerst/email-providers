@@ -3,10 +3,14 @@
 const fetch = require('node-fetch')
 const uniq = require('lodash.uniq')
 const queue = require('queue')
-const rank = require('alexarank')
+const fetchStats = require('alexa-stats')
 const fs = require('fs')
 
-fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generate/domains.txt')
+const parseDecimalWithComma = decimal => parseInt(decimal.replace(/,/g, ''), 10)
+
+fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generate/domains.txt', {
+	redirect: 'follow'
+})
 .then((res) => res.text())
 .then((data) => {
 	const all = uniq(
@@ -22,11 +26,16 @@ fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generat
 
 	const q = queue({concurrency: 20, timeout: 3000})
 	for (let provider of all) {
-		const job = (cb) =>
-			rank(provider, (err, data) => {
-				if (err) cb(err)
-				else cb(null, data && data.rank ? +data.rank : 0)
+		const job = (cb) => {
+			fetchStats(provider)
+			.then((data) => {
+				if (data.globalRank === '-') return cb(null, null)
+				const rank = parseDecimalWithComma(data.globalRank, 10)
+				if (Number.isNaN(rank)) throw new Error('invalid response')
+				cb(null, rank)
 			})
+			.catch(cb)
+		}
 		job.provider = provider
 		q.push(job)
 	}
@@ -34,7 +43,7 @@ fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generat
 	const common = []
 	q.on('timeout', (job) => console.error('timeout:', job.provider))
 	q.on('success', (rank, job) => {
-		if (rank > 0 && rank < 30000)
+		if (rank !== null && rank > 0 && rank < 30000)
 			common.push([job.provider, rank])
 	})
 	q.on('end', (job) => {
@@ -47,6 +56,8 @@ fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generat
 		})
 	})
 	q.start()
+
+	q.on('error', console.error)
 
 })
 .catch((err) => {
