@@ -6,8 +6,7 @@ script:
   - 'npm run build'
   - 'npm test'
 before_deploy:
-  - npm i semver
-  - npm version --no-git-tag-version --force $(./node_modules/.bin/semver -i minor $(npm info vbb-graph version))
+  - npm version --no-git-tag-version --force $(npx semver -- -i minor $(npm info vbb-graph version))
 deploy:
   provider: npm
   on:
