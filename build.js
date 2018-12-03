@@ -40,9 +40,13 @@ fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generat
 		const job = (cb) => {
 			fetchStats(provider)
 			.then((data) => {
-				if (data.globalRank === '-') return cb(null, null)
+				if (data.globalRank === '-' || !data.globalRank) return cb(null, null)
 				const rank = parseDecimalWithComma(data.globalRank, 10)
-				if (Number.isNaN(rank)) throw new Error('invalid response')
+				if (Number.isNaN(rank)) {
+					const err = new Error('invalid response')
+					err.data = data
+					throw err
+				}
 				cb(null, rank)
 			})
 			.catch(cb)
@@ -60,7 +64,7 @@ fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generat
 	q.on('end', (job) => {
 		console.info(`Fetched alexa rankings. common.json will contain the ${common.length} most common.`)
 		const sorted = common
-			.sort((a, b) => a[1] - b[1])
+			.sort((a, b) => b[1] - a[1]) // by score, descending
 			.map((a) => a[0])
 		fs.writeFile('common.json', JSON.stringify(sorted), (err) => {
 			if (err) throw err
