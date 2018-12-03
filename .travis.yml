@@ -1,7 +1,7 @@
 sudo: false
 language: node_js
 node_js:
-  - 'lts/*'
+  - 'stable'
 script:
   - 'npm run build'
   - 'npm test'
