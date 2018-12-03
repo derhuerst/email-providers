@@ -3,10 +3,21 @@
 const fetch = require('node-fetch')
 const uniq = require('lodash.uniq')
 const queue = require('queue')
-const fetchStats = require('alexa-stats')
+const retry = require('p-retry')
+const _fetchStats = require('alexa-stats')
 const fs = require('fs')
 
 const parseDecimalWithComma = decimal => parseInt(decimal.replace(/,/g, ''), 10)
+
+const fetchStats = (domain) => {
+	console.debug(domain)
+	const fetch = () => _fetchStats(domain)
+	return retry(fetch, {
+		retries: 5,
+		factor: 3,
+		minTimeout: 5 * 1000
+	})
+}
 
 fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generate/domains.txt', {
 	redirect: 'follow'
