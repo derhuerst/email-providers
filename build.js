@@ -40,7 +40,7 @@ fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generat
 		const job = (cb) => {
 			fetchStats(provider)
 			.then((data) => {
-				if (data.globalRank === '-') return cb(null, null)
+				if (data.globalRank === '-' || !data.globalRank) return cb(null, null)
 				const rank = parseDecimalWithComma(data.globalRank, 10)
 				if (Number.isNaN(rank)) {
 					const err = new Error('invalid response')
