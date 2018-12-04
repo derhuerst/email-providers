@@ -1,7 +1,7 @@
 {
 	"name":         "email-providers",
 	"description":  "A list of common eMail providers.",
-	"version":      "1.0.1",
+	"version": "1.0.2",
 	"main":         "index.js",
 	"files":        ["index.js", "all.json", "common.json"],
 	"keywords":     ["email", "mail", "providers", "endings", "address"],
