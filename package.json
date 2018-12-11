@@ -16,7 +16,7 @@
 	"devDependencies": {
 		"node-fetch": "^2.0.0",
 		"lodash.uniq": "^4.5",
-		"queue": "^4",
+		"queue": "^5.0.0",
 		"alexa-stats": "0.0.3",
 		"domain-regex": "^0.0.1",
 		"p-retry": "^2.0.0",
