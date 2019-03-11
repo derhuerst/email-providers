@@ -19,7 +19,7 @@
 		"queue": "^6.0.0",
 		"alexa-stats": "0.0.3",
 		"domain-regex": "^0.0.1",
-		"p-retry": "^3.0.0",
+		"p-retry": "^4.0.0",
 		"punycode": "^2"
 	},
 	"scripts": {
