@@ -10,7 +10,13 @@ const fs = require('fs')
 const parseDecimalWithComma = decimal => parseInt(decimal.replace(/,/g, ''), 10)
 
 const fetchStats = (domain) => {
-	const fetch = () => _fetchStats(domain)
+	const fetch = () => {
+		return _fetchStats(domain)
+		.then((data) => {
+			if (data.globalRank === null) throw new Error('retry!')
+			return data
+		})
+	}
 	return retry(fetch, {
 		retries: 5,
 		factor: 3,
@@ -36,7 +42,6 @@ fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generat
 
 	const q = queue({concurrency: 20, timeout: 3000})
 	for (let provider of all) {
-		if (!provider) console.error('provider', provider)
 		const job = (cb) => {
 			fetchStats(provider)
 			.then((data) => {
