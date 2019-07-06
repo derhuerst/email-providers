@@ -22,7 +22,7 @@ npm install email-providers
 
 ## Usage
 
-The [package published to npm](https://npmjs.com/email-proivders) contains two files `all.json` and `common.json`.
+The [package published to npm](https://npmjs.com/email-providers) contains two files `all.json` and `common.json`.
 
 ```
 const all = require('email-providers/all.json')
