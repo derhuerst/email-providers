@@ -16,10 +16,9 @@
 	"devDependencies": {
 		"node-fetch": "^2.0.0",
 		"lodash.uniq": "^4.5",
-		"queue": "^6.0.0",
-		"alexa-stats": "0.0.3",
+		"csv-parser": "^2.3.0",
 		"domain-regex": "^0.0.1",
-		"p-retry": "^4.0.0",
+		"pump": "^3.0.0",
 		"punycode": "^2"
 	},
 	"scripts": {

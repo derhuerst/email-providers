@@ -1,87 +1,89 @@
 'use strict'
 
-const fetch = require('node-fetch')
+const _fetch = require('node-fetch')
 const uniq = require('lodash.uniq')
-const queue = require('queue')
-const retry = require('p-retry')
-const _fetchStats = require('alexa-stats')
-const fs = require('fs')
+const pump = require('pump')
+const csvParser = require('csv-parser')
+const {Writable} = require('stream')
+const {promisify} = require('util')
+const {writeFile} = require('fs')
 
-const parseDecimalWithComma = decimal => parseInt(decimal.replace(/,/g, ''), 10)
+const USER_AGENT = 'https://github.com/derhuerst/email-providers build script'
+const PROVIDERS_URL = 'https://raw.githubusercontent.com/derhuerst/emailproviders/master/generate/domains.txt'
+const TOP_DOMAINS_URL = 'https://downloads.majestic.com/majestic_million.csv'
 
-const fetchStats = (domain) => {
-	const fetch = () => {
-		return _fetchStats(domain)
-		.then((data) => {
-			if (data.globalRank === null) throw new Error('retry!')
-			return data
-		})
-	}
-	return retry(fetch, {
-		retries: 5,
-		factor: 3,
-		minTimeout: 5 * 1000
+const fetch = (url) => {
+	return _fetch(url, {
+		redirect: 'follow',
+		headers: {'user-agent': USER_AGENT}
+	})
+	.then((res) => {
+		if (!res.ok) {
+			const err = new Error(res.statusText)
+			err.statusCode = res.status
+			throw err
+		}
+		return res
 	})
 }
 
-fetch('https://raw.githubusercontent.com/derhuerst/emailproviders/master/generate/domains.txt', {
-	redirect: 'follow'
-})
-.then((res) => res.text())
-.then((data) => {
-	const all = uniq(
-		data.split('\n')
+const fetchProviders = () => {
+	return fetch(PROVIDERS_URL)
+	.then(res => res.text())
+	.then((data) => {
+		data = data.split('\n')
 		.map((d) => d.trim())
 		.filter((d) => d.length > 0)
-	).sort()
-	console.info(`Fetched list of providers. all.json will contain ${all.length}.`)
-
-	fs.writeFile('all.json', JSON.stringify(all), (err) => {
-		if (err) throw err
+		return uniq(data).sort()
 	})
+}
 
-	const q = queue({concurrency: 20, timeout: 3000})
-	for (let provider of all) {
-		const job = (cb) => {
-			fetchStats(provider)
-			.then((data) => {
-				if (data.globalRank === '-' || !data.globalRank) return cb(null, null)
-				const rank = parseDecimalWithComma(data.globalRank, 10)
-				if (Number.isNaN(rank)) {
-					const err = new Error('invalid response')
-					err.data = data
-					throw err
-				}
-				cb(null, rank)
-			})
-			.catch(cb)
+const fetchDomains = () => {
+	return fetch(TOP_DOMAINS_URL)
+	.then(res => new Promise((resolve, reject) => {
+		const domains = new Map()
+		const onRow = (row, _, cb) => {
+			domains.set(row.Domain, parseInt(row.GlobalRank))
+			cb()
 		}
-		job.provider = provider
-		q.push(job)
-	}
+		const onRows = (rows, _, cb) => {
+			for (let i = 0; i < rows.length; i++) {
+				domains.set(rows[i].Domain, parseInt(rows[i].GlobalRank))
+			}
+			cb()
+		}
 
-	const common = []
-	q.on('timeout', (job) => console.error('timeout:', job.provider))
-	q.on('success', (rank, job) => {
-		console.info(job.provider, rank)
-		if (rank !== null && rank > 0 && rank < 30000)
-			common.push([job.provider, rank])
-	})
-	q.on('end', (job) => {
-		console.info(`Fetched alexa rankings. common.json will contain the ${common.length} most common.`)
-		const sorted = common
-			.sort((a, b) => a[1] - b[1]) // by Alexa rank, ascending
-			.map((a) => a[0])
-		fs.writeFile('common.json', JSON.stringify(sorted), (err) => {
-			if (err) throw err
-		})
-	})
-	q.start()
+		return pump(
+			res.body,
+			csvParser(),
+			new Writable({objectMode: true, write: onRow, writev: onRows}),
+			(err) => {
+				if (err) reject(err)
+				else resolve(domains)
+			}
+		)
+	}))
+}
 
-	q.on('error', console.error)
+const parseDecimalWithComma = decimal => parseInt(decimal.replace(/,/g, ''), 10)
 
+;(async () => {
+	const [all, domains] = await Promise.all([fetchProviders(), fetchDomains()])
+
+	console.info(`Fetched list of providers. all.json will contain ${all.length}.`)
+	await promisify(writeFile)('all.json', JSON.stringify(all))
+
+	const common = all
+	.filter(provider => domains.has(provider))
+	.map(provider => [provider, domains.get(provider)])
+	.sort((a, b) => a[1] - b[1]) // by rank, ascending
+	.map(([provider]) => provider)
+
+	console.info(`common.json will contain the ${common.length} most common.`)
+	await promisify(writeFile)('common.json', JSON.stringify(common))
 })
+()
 .catch((err) => {
-	console.error(err.message)
+	console.error(err)
 	process.exit(1)
 })
