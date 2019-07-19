@@ -5,8 +5,10 @@ node_js:
 script:
   - 'npm run build'
   - 'npm test'
+after_script:
+  - ls -lh all.json common.json
 before_deploy:
-  - npm version --no-git-tag-version --force $(npx semver -- -i minor $(npm info vbb-graph version))
+  - npm version --no-git-tag-version --force $(npx semver -- -i minor $(npm info email-providers version))
 deploy:
   provider: npm
   on:
