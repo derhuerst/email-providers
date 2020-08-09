@@ -43,7 +43,8 @@ const fetchDomains = () => {
 	.then(res => new Promise((resolve, reject) => {
 		const domains = new Map()
 		const onRow = (row, _, cb) => {
-			domains.set(row.Domain, parseInt(row.GlobalRank))
+			const rank = parseInt(row.GlobalRank)
+			if (rank < 100000) domains.set(row.Domain, rank)
 			cb()
 		}
 		const onRows = (rows, _, cb) => {

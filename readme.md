@@ -2,7 +2,7 @@
 
 **A list of common eMail providers.** [Thanks to @goware](https://github.com/goware/emailproviders)!
 
-`all.json` contains roughly 4k domains of email providers. `common.json` contains those with an [Alexa rank](https://en.wikipedia.org/wiki/List_of_most_popular_websites) of `< 30000`.
+`all.json` contains roughly 4k domains of email providers. `common.json` contains those with an [Majestic Million rank](https://majestic.com/reports/majestic-million) of `< 100000`.
 
 [![npm version](https://img.shields.io/npm/v/email-providers.svg)](https://www.npmjs.com/package/email-providers)
 [![build status](https://img.shields.io/travis/derhuerst/email-providers.svg)](https://travis-ci.org/derhuerst/email-providers)
@@ -29,7 +29,7 @@ const all = require('email-providers/all.json')
 const common = require('email-providers/common.json')
 
 all.length    // 4149
-common.length // 187
+common.length // 312
 all[0]        // 1033edge.com
 common[0]     // yahoo.com
 ```
