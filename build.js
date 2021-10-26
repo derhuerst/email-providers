@@ -7,6 +7,8 @@ const csvParser = require('csv-parser')
 const {Writable} = require('stream')
 const {promisify} = require('util')
 const {writeFile} = require('fs')
+const domainRegex = require('domain-regex')()
+const punycode = require('punycode').toASCII
 
 const USER_AGENT = 'https://github.com/derhuerst/email-providers build script'
 const PROVIDERS_URL = 'https://raw.githubusercontent.com/derhuerst/emailproviders/master/generate/domains.txt'
@@ -34,6 +36,7 @@ const fetchProviders = () => {
 		data = data.split('\n')
 		.map((d) => d.trim())
 		.filter((d) => d.length > 0)
+		.filter(d => domainRegex.test(punycode(d)))
 		return uniq(data).sort()
 	})
 }
