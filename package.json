@@ -1,7 +1,7 @@
 {
 	"name": "email-providers",
 	"description": "A list of common eMail providers.",
-	"version": "1.0.4",
+	"version": "1.13.1",
 	"main": "index.js",
 	"files": [
 		"index.js",
