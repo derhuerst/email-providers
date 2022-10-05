@@ -1,17 +1,22 @@
-'use strict'
+// todo: use import assertions once they're supported by Node.js & ESLint
+// https://github.com/tc39/proposal-import-assertions
+import {createRequire} from 'module'
+const require = createRequire(import.meta.url)
 
-const a = require('assert')
-const domainRegex = require('domain-regex')()
-const punycode = require('punycode').toASCII
+import a from 'assert'
+import createDomainRegex from 'domain-regex'
+import {toASCII as punycode} from 'punycode'
 
+import entrypoint from './index.js'
 const all = require('./all.json')
 const common = require('./common.json')
 
+const domainRegex = createDomainRegex()
 const isValidDomain = (domain) => domainRegex.test(punycode(domain))
 
 
 
-a.deepStrictEqual(require('.'), all, 'module doesn\'t export all')
+a.deepStrictEqual(entrypoint, all, 'module doesn\'t export all')
 
 
 

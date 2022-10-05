@@ -1,3 +1,8 @@
-'use strict'
+// todo: use import assertions once they're supported by Node.js & ESLint
+// https://github.com/tc39/proposal-import-assertions
+import {createRequire} from 'module'
+const require = createRequire(import.meta.url)
 
-module.exports = require('./all.json')
+const all = require('./all.json')
+
+export default all

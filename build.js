@@ -1,14 +1,11 @@
-'use strict'
-
-const _fetch = require('node-fetch')
-const uniq = require('lodash.uniq')
-const pump = require('pump')
-const csvParser = require('csv-parser')
-const {Writable} = require('stream')
-const {promisify} = require('util')
-const {writeFile} = require('fs')
-const domainRegex = require('domain-regex')()
-const punycode = require('punycode').toASCII
+import _fetch from 'node-fetch'
+import uniq from 'lodash.uniq'
+import csvParser from 'csv-parser'
+import {pipeline, Writable} from 'node:stream'
+import {promisify} from 'node:util'
+import {writeFile} from 'node:fs'
+import createDomainRegex from 'domain-regex'
+import {toASCII as punycode} from 'punycode'
 
 const USER_AGENT = 'https://github.com/derhuerst/email-providers build script'
 const PROVIDERS_URL = 'https://raw.githubusercontent.com/derhuerst/emailproviders/master/generate/domains.txt'
@@ -29,6 +26,7 @@ const fetch = (url) => {
 	})
 }
 
+const domainRegex = createDomainRegex()
 const fetchProviders = () => {
 	return fetch(PROVIDERS_URL)
 	.then(res => res.text())
@@ -57,7 +55,7 @@ const fetchDomains = () => {
 			cb()
 		}
 
-		return pump(
+		return pipeline(
 			res.body,
 			csvParser(),
 			new Writable({objectMode: true, write: onRow, writev: onRows}),
