@@ -23,12 +23,12 @@
 	"bugs": "https://github.com/derhuerst/email-providers/issues",
 	"license": "ISC",
 	"engines": {
-		"node": ">=6"
+		"node": ">=18"
 	},
 	"devDependencies": {
 		"node-fetch": "^2.0.0",
 		"lodash.uniq": "^4.5",
-		"csv-parser": "^2.3.0",
+		"csv-parser": "^3.0.0",
 		"domain-regex": "^0.0.1",
 		"pump": "^3.0.0",
 		"punycode": "^2"
