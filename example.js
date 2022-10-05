@@ -6,7 +6,8 @@ const require = createRequire(import.meta.url)
 const all = require('./all.json')
 const common = require('./common.json')
 
-all.length
-common.length
-all[0]
-common[0]
+console.log(`from all.json (${all.length}:`)
+console.log(all[Math.floor(Math.random() * all.length)])
+
+console.log(`from common.json (${common.length}):`)
+console.log(common[Math.floor(Math.random() * common.length)])
