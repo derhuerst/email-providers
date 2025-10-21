@@ -8,12 +8,16 @@ on:
     # on day-of-month 5 at 02:45
     - cron:  '45 2 5 * *'
 
+permissions:
+  id-token: write # for OIDC-based publishing to npm
+
 jobs:
   test-and-publish:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['18']
+        node-version:
+          - '22'
 
     steps:
     - name: checkout
@@ -22,15 +26,16 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    # for OIDC-based publishing to npm
+    - name: setup npm v11
+      run: npm install -g npm@11
+
     - run: npm install
 
     - run: npm run build
     - run: ls -lh all.json common.json
     - run: npm test
 
-    - name: configure npm auth token
-      run: |
-        npm set '//registry.npmjs.org/:_authToken' '${{ secrets.NPM_TOKEN }}'
     - name: bump version
       run: npm version --no-git-tag-version --force $(npx semver -- -i minor $(npm info email-providers version))
     - name: publish
